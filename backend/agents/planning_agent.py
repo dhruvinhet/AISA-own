@@ -2,6 +2,7 @@ import google.generativeai as genai
 import os
 from typing import Dict, List, Any
 import json
+from agents.project_generator import generate_project
 
 class PlanningAgent:
     def __init__(self):
@@ -224,11 +225,44 @@ class PlanningAgent:
                 print("🔄 Converted to text format response")
             
             print(f"📦 Final plan keys: {list(plan.keys()) if isinstance(plan, dict) else 'Not a dict'}")
+            
+            # Save the plan to a JSON file in the Workspace folder
+            try:
+                if isinstance(plan, dict) and 'project_overview' in plan and 'name' in plan['project_overview']:
+                    # Get the project name from the plan
+                    project_name = plan['project_overview']['name']
+                    
+                    # Create a sanitized version of the project name for the folder name
+                    # Replace spaces and special characters with underscores
+                    sanitized_name = ''.join(c if c.isalnum() else '_' for c in project_name)
+                    
+                    # Create the project directory in the Workspace folder
+                    workspace_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'Workspace')
+                    project_dir = os.path.join(workspace_path, sanitized_name)
+                    os.makedirs(project_dir, exist_ok=True)
+                    
+                    # Save the plan as a JSON file
+                    plan_file_path = os.path.join(project_dir, 'project_plan.json')
+                    with open(plan_file_path, 'w', encoding='utf-8') as f:
+                        json.dump(plan, f, indent=4, ensure_ascii=False)
+                    
+                    print(f"💾 Project plan saved to: {plan_file_path}")
+                    
+                    # Generate the project structure based on the saved plan
+                    print(f"🏗️ Generating project structure from plan...")
+                    if generate_project(project_dir, use_existing_folder=True):
+                        print(f"✅ Project structure successfully generated")
+                    else:
+                        print(f"⚠️ Failed to generate project structure")
+                else:
+                    print("⚠️ Cannot save plan: Project name not found in plan structure")
+            except Exception as save_error:
+                print(f"⚠️ Failed to save project plan to file: {str(save_error)}")
+            
             return plan
             
         except Exception as e:
-            # Return a structured error response
-            return {
+            error_response = {
                 "error": True,
                 "message": f"Failed to generate project plan: {str(e)}",
                 "project_overview": {
@@ -238,3 +272,15 @@ class PlanningAgent:
                 "raw_plan": f"Error: {str(e)}",
                 "format": "error"
             }
+            
+            # Try to save error information
+            try:
+                workspace_path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'Workspace')
+                error_file_path = os.path.join(workspace_path, 'planning_error.json')
+                with open(error_file_path, 'w', encoding='utf-8') as f:
+                    json.dump(error_response, f, indent=4, ensure_ascii=False)
+                print(f"💾 Error information saved to: {error_file_path}")
+            except Exception as save_error:
+                print(f"⚠️ Failed to save error information: {str(save_error)}")
+                
+            return error_response

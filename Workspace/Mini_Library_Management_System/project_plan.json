@@ -1,0 +1,27 @@
+{
+    "project_overview": {
+        "name": "Mini Library Management System",
+        "description": "A simple application to manage a small library, allowing users to add, remove, search, and list books. It will also track borrowed books and their due dates.",
+        "purpose": "To provide a basic system for managing a small collection of books, including tracking borrowed items.",
+        "audience": "Small libraries, personal book collections, educational institutions"
+    },
+    "technical_requirements": {
+        "python_version": "3.11",
+        "dependencies": "streamlit, pandas, datetime",
+        "gui_framework": "Streamlit",
+        "gui_framework_justification": "Streamlit is chosen for its ease of use in creating interactive web applications, making it suitable for a library management system accessible through a browser.",
+        "database_requirements": "None",
+        "external_apis": "None",
+        "system_requirements": "Standard Python environment"
+    },
+    "project_structure": {
+        "root_directory": "library_management_system",
+        "description": "Modular structure for maintainability and scalability.",
+        "folders": "library_management_system/\n├── src/\n│   ├── __init__.py\n│   ├── library_operations.py\n│   ├── ui.py\n│   └── utils.py\n├── tests/\n│   ├── __init__.py\n│   └── test_library_operations.py\n├── data/\n│   └── books.csv\n├── README.md\n└── main.py"
+    },
+    "file_breakdown": "File: library_management_system/main.py\nPurpose: Main entry point for the Streamlit application.\nKey Components: Streamlit UI setup, calls functions from ui.py.\nDependencies: streamlit, src.ui\nInteractions: Imports and uses functions from src.ui to display the library management interface.\n\nFile: library_management_system/src/ui.py\nPurpose: Defines the Streamlit user interface elements and their behavior.\nKey Components: Functions for displaying book lists, search bars, add/remove forms, and borrow/return functionalities.\nDependencies: streamlit, pandas, src.library_operations, src.utils\nInteractions: Interacts with src.library_operations to perform library actions and src.utils for data loading/saving.\n\nFile: library_management_system/src/library_operations.py\nPurpose: Contains the core logic for library operations (add, remove, search, borrow, return books).\nKey Components: Functions for managing book data, updating book statuses, and handling borrowing/returning.\nDependencies: pandas, datetime, src.utils\nInteractions: Reads and writes book data using src.utils.\n\nFile: library_management_system/src/utils.py\nPurpose: Utility functions for data loading and saving (CSV file handling).\nKey Components: Functions to load book data from CSV, save book data to CSV.\nDependencies: pandas\nInteractions: Used by src.library_operations and src.ui to persist book data.\n\nFile: library_management_system/data/books.csv\nPurpose: Stores the book data in CSV format.\nKey Components: CSV file with book details (title, author, ISBN, status, due date).\nDependencies: None (accessed via pandas)\nInteractions: Read and written to by src.utils.\n\nFile: library_management_system/tests/test_library_operations.py\nPurpose: Contains unit tests for the functions in src.library_operations.py.\nKey Components: Test functions for adding, removing, searching, borrowing, and returning books.\nDependencies: unittest, src.library_operations\nInteractions: Tests the functionality of src.library_operations.\n\nFile: library_management_system/README.md\nPurpose: Provides project documentation and instructions.\nKey Components: Project description, setup instructions, usage examples.\nDependencies: None\nInteractions: None",
+    "implementation_strategy": {
+        "development_phases": "1. Set up project structure and dependencies.\n2. Implement data loading and saving utilities (src/utils.py).\n3. Implement core library operations (src/library_operations.py).\n4. Develop the Streamlit UI (src/ui.py).\n5. Integrate UI with library operations (main.py).\n6. Implement unit tests (tests/test_library_operations.py).\n7. Deploy the application.",
+        "test_file_requirements": "Unit tests for library_operations.py, covering add, remove, search, borrow, and return functionalities. Test data should be created to simulate different scenarios."
+    }
+}
